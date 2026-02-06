@@ -9,7 +9,7 @@
   <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original.svg" width="90" alt="PostgreSQL Logo" />
 </p>
 
-<h1 align="center">Hotel Reservations Database</h1>
+<h1 align="center">Hotel Reservations</h1>
 
 <p align="center">
   Projeto acadêmico de banco de dados para sistema de reservas de quartos de hotel
@@ -89,12 +89,85 @@ Utilização de quadro Scrum para organização e acompanhamento das atividades 
 
 ## Instalação e Execução
 
-### Pré-requisitos
+### Configuração de ambiente (.env)
 
-- Java 21 ou superior
-- Docker
-- Docker Compose
-- Git
+Este projeto **não versiona arquivos `.env`**.  
+Você **deve criar um arquivo `.env` próprio na raiz do projeto** antes de executar a aplicação.
+
+Use o arquivo `.env.example` como base:
+
+```env
+# Senha do usuário do banco de dados PostgreSQL
+HOTEL_RESERVATIONS_DB_PASSWORD=mude_a_senha_aqui
+
+# Profile ativo do Spring Boot
+# docker = Docker com seed
+# prod   = Docker sem seed
+SPRING_PROFILES_ACTIVE=docker
+
+# Origens permitidas para CORS (opcional)
+# Se não definir, o backend usa o valor padrão do application.yml
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+
+# Versão da aplicação (opcional)
+APP_VERSION=dev
+```
+
+Crie o seu **`.env`** copiando o exemplo:
+
+```bash
+cp .env.example .env
+```
+
+E ajuste os valores conforme necessário.
+
+---
+
+### Perfis de execução do projeto
+
+O projeto possui três formas principais de execução, controladas via **`SPRING_PROFILES_ACTIVE`** no **`.env`**
+
+#### Execução local (sem Docker, sem seed)
+
+- Profile não definido ou diferente de **`docker`** e **`prod`**
+- Banco PostgreSQL deve existir localmente
+- Não executa seeder
+- Flyway roda apenas migrations padrão 
+
+Configuração usada:
+- Database: **`hotel_reservations_dev`**
+- User: **`hotel_reservations_dev_app`**
+- Password: **`valor de HOTEL_RESERVATIONS_DB_PASSWORD`**
+
+Antes de rodar, é **obrigatório criar o usuário e o banco localmente.**
+
+Exemplo de execução do backend:
+
+```bash
+./mvnw spring-boot:run
+```
+
+#### Execução com Docker (com seed)
+
+- **`SPRING_PROFILES_ACTIVE=docker`**
+- Banco e backend sobem via Docker Compose
+- Seeder é executado automaticamente
+- Migrations padrão + migrations de desenvolvimento
+
+Esse profile é indicado para desenvolvimento inicial e testes rápidos.
+
+---
+
+#### Execução com Docker (sem seed)
+
+- **`SPRING_PROFILES_ACTIVE=prod`**
+- Banco e backend sobem via Docker Compose
+- Seeder não é executado
+- Apenas migrations oficiais
+
+Esse profile simula o comportamento de produção.
+
+---
 
 ### Subindo a aplicação com Docker Compose
 
