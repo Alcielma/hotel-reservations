@@ -29,7 +29,7 @@ services:
       - public-net
       - internal-net
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       HOTEL_RESERVATIONS_DB_PASSWORD: ${HOTEL_RESERVATIONS_DB_PASSWORD}
     depends_on:
       db:
