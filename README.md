@@ -44,6 +44,22 @@ Além disso, o modelo contempla o registro de pagamentos, permitindo associar tr
 
 O projeto também prevê suporte a serviços adicionais oferecidos pelo hotel, possibilitando sua associação às reservas e mantendo o valor praticado no momento da contratação, preservando a consistência histórica dos dados.
 
+## Modelagem do Banco de Dados
+
+Abaixo estão representados os modelos desenvolvidos para a estruturação do sistema.
+
+### Esquema Conceitual
+![Esquema Conceitual](./docs/database/conceitual.png)
+
+### Esquema Lógico
+![Esquema Lógico](./docs/database/logico.png)
+
+## Dicionário de Dados
+
+A documentação completa dos metadados, incluindo descrição das tabelas, colunas, tipos de dados e restrições, pode ser consultada no arquivo abaixo:
+
+📄 [Visualizar Dicionário de Dados (PDF)](./docs/database/dicionario_dados.pdf)
+
 ## Estado atual do projeto
 
 Atualmente, o projeto encontra-se na fase de **implementação e validação do banco de dados**, contendo:
