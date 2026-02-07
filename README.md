@@ -44,23 +44,34 @@ Além disso, o modelo contempla o registro de pagamentos, permitindo associar tr
 
 O projeto também prevê suporte a serviços adicionais oferecidos pelo hotel, possibilitando sua associação às reservas e mantendo o valor praticado no momento da contratação, preservando a consistência histórica dos dados.
 
+## Modelagem do Banco de Dados
+
+Abaixo estão representados os modelos desenvolvidos para a estruturação do sistema.
+
+### Esquema Conceitual
+![Esquema Conceitual](./docs/database/conceitual.png)
+
+### Esquema Lógico
+![Esquema Lógico](./docs/database/logico.png)
+
+## Dicionário de Dados
+
+A documentação completa dos metadados, incluindo descrição das tabelas, colunas, tipos de dados e restrições, pode ser consultada no arquivo abaixo:
+
+📄 [Visualizar Dicionário de Dados (PDF)](./docs/database/dicionario_dados.pdf)
+
 ## Estado atual do projeto
 
-Atualmente, o projeto encontra-se na fase de implementação e validação do banco de dados, contendo:
+Atualmente, o projeto encontra-se na fase de **implementação e validação do banco de dados**, contendo:
 
-Esquema lógico relacional implementado em PostgreSQL;
-
-Banco de dados normalizado (mínimo Segunda Forma Normal);
-
-Migrations SQL versionadas utilizando Flyway;
-
-Infraestrutura containerizada com Docker e Docker Compose;
-
-Backend em Java com Spring Boot utilizado para validação do schema via Hibernate;
-
-Organização do repositório, fluxo de contribuição e padrões de versionamento;
-
-Utilização de quadro Scrum para organização e acompanhamento das atividades da equipe.
+- Esquema lógico relacional implementado em PostgreSQL;
+- Banco de dados normalizado (Segunda Forma Normal);
+- Migrations SQL versionadas utilizando Flyway;
+- Geração dinâmica de dados realistas para testes utilizando script Python e a biblioteca Faker;
+- Infraestrutura containerizada com Docker e Docker Compose;
+- Backend em Java com Spring Boot utilizado para validação do schema via Hibernate;
+- Organização do repositório, fluxo de contribuição e padrões de versionamento;
+- Utilização de quadro Scrum para organização e acompanhamento das atividades da equipe.
 
 ---
 
@@ -79,6 +90,7 @@ Utilização de quadro Scrum para organização e acompanhamento das atividades 
 * Git
 * GitHub
 * Docker
+* Python 3.11 + Faker (geração de dados para povoamento)
 * Conventional Commits
 * Pull Requests com revisão obrigatória
 
