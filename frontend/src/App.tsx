@@ -4,10 +4,25 @@ import Home from './pages/HomePage';
 import MinhasReservasPage from './pages/MinhasReservasPage';
 import LoginPage from './pages/LoginPage';
 import CadastroPage from './pages/CadastroPage';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster 
+        position="bottom-right" 
+        toastOptions={{
+          error: {
+            className: 'horizon-toast',
+            duration: 5000,
+            iconTheme: {
+              primary: '#c53030',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/cadastro" element={<CadastroPage />} />
