@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './components/layout/layout';
-import Register from './pages/Register';
-import Home from './pages/Home';
+import Home from './pages/HomePage';
 import MinhasReservasPage from './pages/MinhasReservasPage';
 import LoginPage from './pages/LoginPage';
 import CadastroPage from './pages/CadastroPage';
@@ -17,7 +16,7 @@ function App() {
           
           <Route index element={<Home />} />
           
-          <Route path="cadastro" element={<Register />} />
+          <Route path="cadastro" element={<CadastroPage />} />
 
           <Route path="reservas" element={<MinhasReservasPage />} />
           

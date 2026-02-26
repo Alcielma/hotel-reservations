@@ -1,7 +1,7 @@
 import { useState } from "react";
 import DateInput from "../components/ui/Date";
 import { Search } from "lucide-react";
-import hotel  from "./../assets/images/hotel.png"
+import styles from "./HomePage.module.css";
 
 const Home = () => {
   const [booking, setBooking] = useState({
@@ -15,26 +15,26 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full flex flex-col">
+    <div className={styles.homeContainer}>
       {/* --- BANNER PRINCIPAL --- */}
-      <section className="relative w-full h-125 overflow-hidden">
+      <section className={styles.heroSection}>
         <img
-          src={hotel}
+          src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
           alt="Horizon Hotel Exterior"
-          className="w-full h-full object-cover"
+          className={styles.heroImage}
         />
-        <div className="absolute inset-0 bg-black/10"></div>
+        <div className={styles.heroOverlay}></div>
       </section>
 
       {/* --- SEÇÃO DE BUSCA (DISPONIBILIDADE) --- */}
-      <section className="max-w-7xl mx-auto w-full px-12 py-8">
-        <div className="flex flex-col gap-6">
-          <h2 className="text-4xl font-bold text-gray-900 tracking-tight">
+      <section className={styles.searchSection}>
+        <div className={styles.searchContent}>
+          <h2 className={styles.title}>
             Período da Acomodação
           </h2>
 
-          <div className="flex flex-col md:flex-row items-end gap-4">
-            <div className="w-64">
+          <div className={styles.formGroup}>
+            <div className={styles.inputWrapper}>
               <DateInput
                 label="Entrada"
                 name="checkIn"
@@ -46,7 +46,7 @@ const Home = () => {
               />
             </div>
 
-            <div className="w-64">
+            <div className={styles.inputWrapper}>
               <DateInput
                 label="Saída"
                 name="checkOut"
@@ -58,18 +58,18 @@ const Home = () => {
               />
             </div>
 
-            <button className="bg-[#1e293b] text-white p-3.5 rounded-full hover:bg-slate-700 transition-all shadow-md active:scale-95 mb-0.5">
+            <button className={styles.searchButton} aria-label="Buscar disponibilidade">
               <Search size={24} strokeWidth={2.5} />
             </button>
           </div>
           
-          <p className="text-red-500 text-sm italic">
+          <p className={styles.helperText}>
             Digite a data para consultar os quartos disponíveis!
           </p>
         </div>
       </section>
       
-      <div className="h-10"></div>
+      <div className={styles.spacer}></div>
     </div>
   );
 };

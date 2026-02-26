@@ -1,0 +1,94 @@
+.homeContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 500px; /* Equivalente ao h-125 */
+  overflow: hidden;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.searchSection {
+  max-width: 1280px; /* Equivalente ao max-w-7xl */
+  margin: 0 auto;
+  width: 100%;
+  padding: 2rem 3rem; /* Equivalente ao px-12 py-8 */
+  box-sizing: border-box;
+}
+
+.searchContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.inputWrapper {
+  width: 256px; /* Equivalente ao w-64 */
+}
+
+.searchButton {
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 9999px; /* Circular */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2px;
+}
+
+.searchButton:hover {
+  background-color: #334155;
+}
+
+.searchButton:active {
+  transform: scale(0.95);
+}
+
+.helperText {
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-style: italic;
+  margin: 0;
+}
+
+.spacer {
+  height: 2.5rem;
+}
