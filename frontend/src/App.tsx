@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './components/layout/layout';
-
-const Home = () => <div className="p-10 text-2xl font-bold">Bem-vindo à Homepage do Horizon!</div>;
-const Cadastro = () => <div className="p-10 text-2xl font-bold">Tela de Cadastro de Usuário</div>;
+import Register from './pages/Register';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -12,7 +11,7 @@ function App() {
           
           <Route index element={<Home />} />
           
-          <Route path="cadastro" element={<Cadastro />} />
+          <Route path="cadastro" element={<Register />} />
           
         </Route>
       </Routes>
