@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import styles from "./HomePage.module.css";
 import RoomCard from "../components/room/RoomCard";
 import toast from "react-hot-toast";
+import stylesHorizon from "../components/layout/Layout.module.css"
 
 const MOCK_ROOMS = [
   { id: 1, type: "Standart", description: "Cama única de solteiro", date: "21 - 27 de mar.", price: "R$150 noite", image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80" },
@@ -66,7 +67,25 @@ const HomePage = () => {
           alt="Horizon Hotel Exterior"
           className={styles.heroImage}
         />
-        <div className={styles.heroOverlay}></div>
+        <div className={styles.heroOverlay}>
+          <h1 className={styles.welcomeText}>
+              Bem vindo(a) ao 
+              <br/>
+              <div className={stylesHorizon.logoTextWrapper}>
+                  <span className={styles.brandName}>
+                      Horizon
+                  </span>
+                  <span className={styles.subtitleName}>
+                      Hotel & Resort
+                  </span>
+              </div>
+          </h1>
+          
+          {/* Adicionada a classe heroSubtitle */}
+          <h3 className={styles.heroSubtitle}>
+              Experiência de luxo e conforto em cada detalhe da sua estadia
+          </h3>
+      </div>
       </section>
 
       <section className={styles.searchSection}>
@@ -127,7 +146,7 @@ const HomePage = () => {
           <div className={styles.roomsGrid}>
             {MOCK_ROOMS.map((room) => (
               <RoomCard 
-                key={room.id}
+                id={room.id}
                 type={room.type}
                 description={room.description}
                 date={room.date}
