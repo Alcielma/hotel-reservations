@@ -1,10 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+
 import MainLayout from './components/layout/layout';
 import Home from './pages/HomePage';
 import MinhasReservasPage from './pages/MinhasReservasPage';
 import LoginPage from './pages/LoginPage';
 import CadastroPage from './pages/CadastroPage';
-import { Toaster } from 'react-hot-toast';
+import RoomPage from './pages/RoomPage';
+import ReservationConfirm from './components/reservations/ReservationConfirm';
 
 function App() {
   return (
@@ -24,16 +27,20 @@ function App() {
       />
 
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/cadastro" element={<CadastroPage />} />
         
-        <Route path="/home" element={<MainLayout />}>
+        <Route path="/" element={<MainLayout />}>
           
           <Route index element={<Home />} />
           
           <Route path="cadastro" element={<CadastroPage />} />
 
           <Route path="reservas" element={<MinhasReservasPage />} />
+
+          <Route path="/quarto/:id" element={<RoomPage />} />
+
+          <Route path="/reserva/confirmacao/:id" element={<ReservationConfirm />} />
           
         </Route>
       </Routes>
