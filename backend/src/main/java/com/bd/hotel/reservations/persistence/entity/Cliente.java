@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name="cliente")
 @Getter
@@ -28,9 +30,12 @@ public class Cliente {
     private String cpf;
 
     @Column
-    private String celular;
+    private String telefone;
+
+    @Column(name = "data_nascimento", nullable = false)
+    private LocalDate dataNascimento;
 
     public void updateContact(String celular) {
-        this.celular = celular;
+        this.telefone = celular;
     }
 }
