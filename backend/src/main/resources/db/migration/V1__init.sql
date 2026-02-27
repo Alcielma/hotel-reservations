@@ -193,17 +193,28 @@ CREATE TABLE pagamento
     data_pagamento   TIMESTAMPTZ NOT NULL DEFAULT now(),
     metodo_pagamento VARCHAR(50) NOT NULL,
     status_pagamento VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
-    FOREIGN KEY (hospedagem_id) REFERENCES hospedagem (id),
-    FOREIGN KEY (reserva_id) REFERENCES reserva (id),
+
+    CONSTRAINT fk_pagamento_hospedagem
+        FOREIGN KEY (hospedagem_id) REFERENCES hospedagem (id),
+
+    CONSTRAINT fk_pagamento_reserva
+        FOREIGN KEY (reserva_id) REFERENCES reserva (id),
+
     CONSTRAINT chk_status_pgto CHECK (
         status_pagamento IN ('PENDENTE', 'CONCLUIDO', 'ESTORNADO')
         ),
+
     CONSTRAINT chk_metodo_pgto CHECK (
         metodo_pagamento IN ('DINHEIRO', 'CARTAO_CREDITO', 'CARTAO_DEBITO', 'PIX')
         ),
+
     CONSTRAINT ck_pagamento_origem CHECK (
         (hospedagem_id IS NOT NULL AND reserva_id IS NULL)
             OR
         (hospedagem_id IS NULL AND reserva_id IS NOT NULL)
-        )
+        ),
+
+    -- garante 1 pagamento por hospedagem e 1 pagamento por reserva
+    CONSTRAINT unq_pagamento_hospedagem UNIQUE (hospedagem_id),
+    CONSTRAINT unq_pagamento_reserva UNIQUE (reserva_id)
 );
