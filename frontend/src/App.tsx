@@ -3,6 +3,7 @@ import MainLayout from './components/layout/layout';
 import MinhasReservasPage from './pages/MinhasReservasPage';
 import LoginPage from './pages/LoginPage';
 import CadastroPage from './pages/CadastroPage';
+import RelatorioPage from './pages/RelatorioPage';
 
 const Home = () => (
   <div className="p-10">
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<Home />} />
 
           <Route path="reservas" element={<MinhasReservasPage />} />
+          <Route path="relatorios" element={<RelatorioPage />} />
           
         </Route>
       </Routes>
