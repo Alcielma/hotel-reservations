@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {
     Optional<Funcionario> findByUserId(Long userId);
+    boolean existsByUserId(Long userId);
 }
