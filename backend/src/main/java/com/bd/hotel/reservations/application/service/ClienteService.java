@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class ClienteService {
     private final ClienteRepository clienteRepo;
 
-    public Cliente criarPerfil(User user, String nome, String cpf, String celular) {
+    public void criarPerfil(User user, String nome, String cpf, String celular) {
         Cliente cliente = Cliente.builder()
                 .user(user)
                 .nome(nome)
@@ -19,6 +19,6 @@ public class ClienteService {
                 .celular(celular)
                 .build();
 
-        return clienteRepo.save(cliente);
+        clienteRepo.save(cliente);
     }
 }

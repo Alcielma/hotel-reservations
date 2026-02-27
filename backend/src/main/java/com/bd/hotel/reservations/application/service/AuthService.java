@@ -16,6 +16,7 @@ import com.bd.hotel.reservations.web.dto.response.ClienteRegisterResponse;
 import com.bd.hotel.reservations.web.dto.response.LoginResponse;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,7 +39,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public ClienteRegisterResponse register(ClienteRegisterRequest request) {
+    public void register(ClienteRegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyRegisteredException(request.getEmail());
@@ -54,18 +55,12 @@ public class AuthService {
                 Role.CLIENTE
         );
 
-        Cliente cliente = clienteService.criarPerfil(
+        clienteService.criarPerfil(
                 user,
                 request.getNome(),
                 request.getCpf(),
                 request.getCelular()
         );
-
-        return ClienteRegisterResponse.builder()
-                .userId(user.getId())
-                .clienteId(cliente.getId())
-                .email(user.getEmail())
-                .build();
     }
 
     public LoginResponse login(LoginRequest request) {
