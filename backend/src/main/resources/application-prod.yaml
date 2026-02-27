@@ -28,6 +28,8 @@ app:
     enabled: ${BOOTSTRAP_GERENTE_ENABLED:true}
     email: ${BOOTSTRAP_GERENTE_EMAIL}
     password: ${BOOTSTRAP_GERENTE_PASSWORD}
+    nome: ${BOOTSTRAP_GERENTE_NOME}
+    matricula: ${BOOTSTRAP_GERENTE_MATRICULA}
 
 jwt:
   secret: ${JWT_SECRET}

@@ -3,7 +3,6 @@ package com.bd.hotel.reservations.web.controller;
 import com.bd.hotel.reservations.application.service.AuthService;
 import com.bd.hotel.reservations.web.dto.request.LoginRequest;
 import com.bd.hotel.reservations.web.dto.request.ClienteRegisterRequest;
-import com.bd.hotel.reservations.web.dto.response.ClienteRegisterResponse;
 import com.bd.hotel.reservations.web.dto.response.LoginResponse;
 
 import jakarta.validation.Valid;
@@ -20,13 +19,11 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<ClienteRegisterResponse> register(
+    public ResponseEntity<Void> register(
             @Valid @RequestBody ClienteRegisterRequest request
     ) {
-        ClienteRegisterResponse response = authService.register(request);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")

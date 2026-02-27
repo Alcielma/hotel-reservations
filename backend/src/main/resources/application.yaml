@@ -21,7 +21,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -97,5 +97,5 @@ app:
     enabled: false
 
 jwt:
-  secret: ${JWT_SECRET} # Placeholder
+  secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION_MS:86400000} # 24 horas em milissegundos

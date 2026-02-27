@@ -3,7 +3,6 @@ package com.bd.hotel.reservations.application.service;
 import com.bd.hotel.reservations.exception.business.CpfAlreadyRegisteredException;
 import com.bd.hotel.reservations.exception.business.EmailAlreadyRegisteredException;
 import com.bd.hotel.reservations.exception.business.InvalidCredentialsException;
-import com.bd.hotel.reservations.persistence.entity.Cliente;
 import com.bd.hotel.reservations.persistence.enums.Role;
 import com.bd.hotel.reservations.persistence.entity.User;
 import com.bd.hotel.reservations.persistence.repository.ClienteRepository;
@@ -12,7 +11,6 @@ import com.bd.hotel.reservations.security.AuthUserDetails;
 import com.bd.hotel.reservations.security.JwtService;
 import com.bd.hotel.reservations.web.dto.request.LoginRequest;
 import com.bd.hotel.reservations.web.dto.request.ClienteRegisterRequest;
-import com.bd.hotel.reservations.web.dto.response.ClienteRegisterResponse;
 import com.bd.hotel.reservations.web.dto.response.LoginResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -38,7 +36,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public ClienteRegisterResponse register(ClienteRegisterRequest request) {
+    public void register(ClienteRegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyRegisteredException(request.getEmail());
@@ -54,18 +52,12 @@ public class AuthService {
                 Role.CLIENTE
         );
 
-        Cliente cliente = clienteService.criarPerfil(
+        clienteService.criarPerfil(
                 user,
                 request.getNome(),
                 request.getCpf(),
                 request.getCelular()
         );
-
-        return ClienteRegisterResponse.builder()
-                .userId(user.getId())
-                .clienteId(cliente.getId())
-                .email(user.getEmail())
-                .build();
     }
 
     public LoginResponse login(LoginRequest request) {

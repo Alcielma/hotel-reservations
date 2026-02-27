@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 public class FuncionarioService {
     private final FuncionarioRepository funcionarioRepository;
 
-    public Funcionario criarPerfil(User user, String nome, String matricula) {
+    public void criarPerfil(User user, String nome, String matricula) {
         Funcionario funcionario = Funcionario.builder()
                 .user(user)
                 .nome(nome)
                 .matricula(matricula)
                 .build();
 
-        return funcionarioRepository.save(funcionario);
+        funcionarioRepository.save(funcionario);
     }
 }
