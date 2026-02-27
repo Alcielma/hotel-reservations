@@ -26,11 +26,11 @@ export const loginService = async (email: string, password: string): Promise<boo
   try {
     // Ajuste a rota '/auth/login' conforme sua API
     // Faz a chamada POST para o endpoint de login
-    const response = await api.post('/auth/login', { email, password });
+    const response = await api.post<LoginResponse>('/auth/login', { email, password });
     
     // Se receber um token, salva no localStorage para autenticação futura
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
+    if (response.data.accessToken) {
+      localStorage.setItem('token', response.data.accessToken);
     }
     
     return true;
@@ -40,6 +40,12 @@ export const loginService = async (email: string, password: string): Promise<boo
     throw new Error(error.response?.data?.message || 'Falha ao realizar login');
   }
 };
+
+interface LoginResponse {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+}
 
 export interface RegisterData {
   nome: string;
@@ -66,7 +72,14 @@ export const registerService = async (data: RegisterData): Promise<boolean> => {
   }
 
   try {
-    const response = await api.post('/auth/register', data);
+    const payload = {
+      email: data.email,
+      password: data.senha,
+      nome: data.nome,
+      cpf: data.cpf.replace(/\D/g, ''), // Remove formatação (pontos e traços)
+      celular: data.telefone.replace(/\D/g, '') // Remove formatação do telefone
+    };
+    await api.post('/auth/register', payload);
     return true;
   } catch (error: any) {
     console.error('Erro no cadastro:', error);
