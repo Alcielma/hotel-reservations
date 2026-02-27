@@ -1,10 +1,6 @@
 package com.bd.hotel.reservations.persistence.entity;
 
-
-
-/* =========================
-ENDERECO (PK = hotel_id)
-========================= */
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "endereco")
