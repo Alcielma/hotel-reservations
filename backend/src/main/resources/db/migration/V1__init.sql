@@ -187,3 +187,30 @@ CREATE TABLE pagamento
         )
 
 );
+
+
+CREATE TABLE usuario (
+                         id BIGSERIAL PRIMARY KEY,
+                         email VARCHAR(255) NOT NULL UNIQUE,
+                         senha_hash VARCHAR(255) NOT NULL,
+                         role VARCHAR(30) NOT NULL,
+                         ativo BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE cliente (
+                         id BIGSERIAL PRIMARY KEY,
+                         usuario_id BIGINT NOT NULL UNIQUE,
+                         nome VARCHAR(120) NOT NULL,
+                         cpf VARCHAR(14) UNIQUE,
+                         CONSTRAINT fk_cliente_usuario
+                             FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE funcionario (
+                             id BIGSERIAL PRIMARY KEY,
+                             usuario_id BIGINT NOT NULL UNIQUE,
+                             nome VARCHAR(120) NOT NULL,
+                             matricula VARCHAR(40) UNIQUE,
+                             CONSTRAINT fk_funcionario_usuario
+                                 FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
+);
