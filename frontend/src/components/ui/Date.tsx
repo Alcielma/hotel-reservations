@@ -9,10 +9,11 @@ interface DateProps {
   required: boolean;
   value: string;
   disabled: boolean;
+  min?: string; 
 }
 
 const DateInput = forwardRef<HTMLInputElement, DateProps>(({
-  onChange, name, label, required, value, disabled
+  onChange, name, label, required, value, disabled, min
 }, ref) => {
   return (
     <div className={styles.container}>
@@ -25,6 +26,7 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
         name={name}
         className={styles.input}
         value={value}
+        min={min} 
         onChange={(e) => onChange({ target: { name: e.target.name, value: e.target.value } })}
         disabled={disabled}
         required={required}
@@ -34,4 +36,5 @@ const DateInput = forwardRef<HTMLInputElement, DateProps>(({
   );
 });
 
+DateInput.displayName = "DateInput"; 
 export default DateInput;

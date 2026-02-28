@@ -18,13 +18,13 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-class Quarto {
+public class Quarto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id", nullable = false)
+    @JoinColumn(name = "hotelId", nullable = false)
     private Hotel hotel;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
