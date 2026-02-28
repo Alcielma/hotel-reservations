@@ -18,7 +18,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-class Quarto {
+public class Quarto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
