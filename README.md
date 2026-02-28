@@ -244,7 +244,7 @@ A base de dados inicial do sistema foi populada com o auxílio de Inteligência 
 O sistema já possui usuários cadastrados para testes:
 
 #### Gerente
-- **Email:** gerente@local.dev  
+- **Email:** funcionario@local.dev
 - **Senha:** password  
 
 #### Cliente
