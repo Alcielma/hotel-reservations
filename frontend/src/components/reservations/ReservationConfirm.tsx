@@ -41,8 +41,7 @@ const ReservationConfirm = () => {
   const handleConfirmReservation = async () => {
     setIsSubmitting(true);
 
-    // TODO: Buscar o ID real do usuário logado no seu sistema de Auth
-    // Por enquanto, usaremos um ID de teste do seu banco povoado (ex: 1)
+    const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const clienteId = user.id || 1; 
 
@@ -53,12 +52,18 @@ const ReservationConfirm = () => {
       quartoIds: [room.id]
     };
 
+    if (!token) {
+      toast.error("Sessão expirada. Por favor, faça login novamente.");
+      navigate('/login');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:8080/reservas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}` // Ative quando tiver JWT
+          'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify(reservationData),
       });
@@ -69,7 +74,7 @@ const ReservationConfirm = () => {
       }
 
       toast.success('Reserva confirmada com sucesso! Aproveite sua estadia.');
-      navigate('/'); 
+      navigate('/home'); 
       
     } catch (err: unknown) {
       let errorMessage = "Falha na comunicação com o servidor";
