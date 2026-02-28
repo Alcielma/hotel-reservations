@@ -13,6 +13,7 @@ import com.bd.hotel.reservations.web.dto.request.LoginRequest;
 import com.bd.hotel.reservations.web.dto.request.ClienteRegisterRequest;
 import com.bd.hotel.reservations.web.dto.response.LoginResponse;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,8 +37,8 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    @Transactional
     public void register(ClienteRegisterRequest request) {
-
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyRegisteredException(request.getEmail());
         }
@@ -56,7 +57,8 @@ public class AuthService {
                 user,
                 request.getNome(),
                 request.getCpf(),
-                request.getCelular()
+                request.getTelefone(),
+                request.getDataNascimento()
         );
     }
 

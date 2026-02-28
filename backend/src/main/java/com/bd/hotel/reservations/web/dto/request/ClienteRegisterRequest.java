@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import java.time.LocalDate;
 
 @Getter
 public class ClienteRegisterRequest {
@@ -22,5 +23,9 @@ public class ClienteRegisterRequest {
     @NotBlank(message = "CPF é obrigatório")
     private String cpf;
 
-    private String celular;
+    @NotBlank
+    private String telefone;
+
+    @NotBlank
+    private LocalDate dataNascimento;
 }

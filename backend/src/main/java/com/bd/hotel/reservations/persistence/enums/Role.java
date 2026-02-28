@@ -4,9 +4,8 @@ import com.bd.hotel.reservations.exception.business.InvalidRoleException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum Role {
-    GERENTE,
-    FUNCIONARIO,
-    CLIENTE;
+    CLIENTE,
+    FUNCIONARIO;
 
     @JsonCreator
     public static Role from(String value) {
