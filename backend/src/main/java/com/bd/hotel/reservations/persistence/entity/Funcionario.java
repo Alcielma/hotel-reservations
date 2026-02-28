@@ -1,7 +1,6 @@
 package com.bd.hotel.reservations.persistence.entity;
 
 import com.bd.hotel.reservations.persistence.enums.CargoFuncionario;
-import com.bd.hotel.reservations.persistence.enums.MetodoPagamento;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +18,7 @@ public class Funcionario {
     private Long id;
 
     @OneToOne(optional=false)
-    @JoinColumn(name="usuario_id", nullable=false, unique=true)
+    @JoinColumn(name="user_id", nullable=false, unique=true)
     private User user;
 
     @Column(nullable=false)

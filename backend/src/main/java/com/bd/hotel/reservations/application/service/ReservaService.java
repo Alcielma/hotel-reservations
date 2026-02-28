@@ -1,109 +1,59 @@
 package com.bd.hotel.reservations.application.service;
 
-import com.bd.hotel.reservations.persistence.entity.Reserva;
 import com.bd.hotel.reservations.persistence.entity.Cliente;
-import com.bd.hotel.reservations.persistence.entity.Quarto;
-import com.bd.hotel.reservations.persistence.repository.ReservaRepository;
 import com.bd.hotel.reservations.persistence.repository.ClienteRepository;
-import com.bd.hotel.reservations.persistence.repository.QuartoRepository;  
-import com.bd.hotel.reservations.web.dto.request.ReservaRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.bd.hotel.reservations.persistence.repository.ReservasDetalhadasViewRepository;
+import com.bd.hotel.reservations.persistence.repository.ReservasDetalhadasViewRowDto;
+import com.bd.hotel.reservations.web.dto.response.ReservasDetalhadasResponse;
+import com.bd.hotel.reservations.web.mapper.ReservaDetalhadaMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ReservaService {
 
-    @Autowired
-    private ReservaRepository repository;
+    private final ReservasDetalhadasViewRepository viewRepo;
+    private final ClienteRepository clienteRepo;
+    private final ReservaDetalhadaMapper mapper;
 
-    @Autowired
-    private ClienteRepository clienteRepository;
+    @Transactional(readOnly = true)
+    public List<ReservasDetalhadasResponse> listarReservasDetalhadas() {
 
-    @Autowired
-    private QuartoRepository quartoRepository;
-
-    // --- MÉTODO PARA SALVAR (CREATE) ---
-    @Transactional
-    public Reserva salvar(ReservaRequest dto) {
-        // 1. Converter DTO para Entidade
-        Reserva reserva = new Reserva();
-        
-        // Busca o cliente pelo ID enviado no JSON
-        Cliente cliente = clienteRepository.findById(dto.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado com ID: " + dto.getClienteId()));
-        
-        // Busca a lista de quartos pelos IDs enviados no JSON
-        List<Quarto> quartosEncontrados = quartoRepository.findAllById(dto.getQuartoIds());
-        if (quartosEncontrados.isEmpty()) {
-            throw new RuntimeException("Nenhum quarto válido foi selecionado.");
+        List<ReservasDetalhadasViewRowDto> rows = viewRepo.listarTudo();
+        if (rows == null || rows.isEmpty()) {
+            return List.of();
         }
 
-        reserva.setCliente(cliente);
-        reserva.setDataCheckinPrevisto(dto.getDataCheckinPrevisto());
-        reserva.setDataCheckoutPrevisto(dto.getDataCheckoutPrevisto());
-        reserva.setQuartos(new HashSet<>(quartosEncontrados));
+        List<Long> clienteIds = rows.stream()
+                .map(ReservasDetalhadasViewRowDto::clienteId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
 
-        // 2. Validar Regras de Negócio
-        validarDatas(reserva.getDataCheckinPrevisto(), reserva.getDataCheckoutPrevisto());
+        Map<Long, String> emailPorClienteId = new HashMap<>();
 
-        // 3. Persistir no Banco
-        return repository.save(reserva);
-    }
+        if (!clienteIds.isEmpty()) {
+            List<Cliente> clientes = clienteRepo.findAllByIdIn(clienteIds);
 
-    // --- MÉTODO PARA ATUALIZAR (UPDATE) ---
-    @Transactional
-    public Reserva atualizar(Long id, ReservaRequest dto) {
-        // Busca a reserva existente
-        Reserva reservaExistente = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reserva não encontrada para atualização."));
-
-        // Valida as novas datas recebidas no DTO
-        validarDatas(dto.getDataCheckinPrevisto(), dto.getDataCheckoutPrevisto());
-
-        // Atualiza apenas os campos permitidos
-        reservaExistente.setDataCheckinPrevisto(dto.getDataCheckinPrevisto());
-        reservaExistente.setDataCheckoutPrevisto(dto.getDataCheckoutPrevisto());
-        
-        // Atualiza quartos se necessário
-        List<Quarto> novosQuartos = quartoRepository.findAllById(dto.getQuartoIds());
-        reservaExistente.setQuartos(new HashSet<>(novosQuartos));
-
-        return repository.save(reservaExistente);
-    }
-
-    // --- MÉTODO PARA DELETAR (DELETE) ---
-    @Transactional
-    public void deletar(Long id) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Reserva não encontrada para exclusão.");
-        }
-        repository.deleteById(id);
-    }
-
-    // --- VALIDAÇÕES ---
-    private void validarDatas(LocalDate checkin, LocalDate checkout) {
-        LocalDate hoje = LocalDate.now();
-
-        if (checkin.isBefore(hoje)) {
-            throw new RuntimeException("A data de check-in não pode ser uma data passada.");
+            for (Cliente c : clientes) {
+                if (c.getUser() != null && c.getUser().getEmail() != null) {
+                    emailPorClienteId.put(c.getId(), c.getUser().getEmail());
+                }
+            }
         }
 
-        if (checkout.isBefore(checkin)) {
-            throw new RuntimeException("A data de check-out deve ser posterior à data de check-in.");
+        List<ReservasDetalhadasResponse> out = new ArrayList<>(rows.size());
+
+        for (ReservasDetalhadasViewRowDto row : rows) {
+            String clientEmail = emailPorClienteId.get(row.clienteId());
+            out.add(mapper.toResponse(row, clientEmail));
         }
 
-        if (checkout.isEqual(checkin)) {
-            throw new RuntimeException("A reserva deve ter pelo menos uma diária.");
-        }
-    }
-    
-    // Listagem simples para o Controller
-    public List<Reserva> listarTodas() {
-        return repository.findAll();
+        return out;
     }
 }

@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-class ServicoAdicional {
+public class ServicoAdicional {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +23,7 @@ class ServicoAdicional {
     @Column(name = "nome_servico", nullable = false, length = 100)
     private String nomeServico;
 
-    @Lob
+    @Column(columnDefinition = "text")
     private String descricao;
 
     @Column(nullable = false, precision = 10, scale = 2)

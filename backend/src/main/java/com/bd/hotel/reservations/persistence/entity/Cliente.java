@@ -35,7 +35,7 @@ public class Cliente {
     @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 
-    public void updateContact(String celular) {
-        this.telefone = celular;
+    public void updateContact(String telefone) {
+        this.telefone = telefone;
     }
 }
