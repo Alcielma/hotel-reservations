@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -16,9 +17,10 @@ import java.util.Set;
 @Entity
 @Table(name = "reserva")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-class Reserva {
+public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
