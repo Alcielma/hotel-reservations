@@ -1,10 +1,11 @@
 package com.bd.hotel.reservations.application.service;
 
 import com.bd.hotel.reservations.persistence.entity.Funcionario;
+import com.bd.hotel.reservations.persistence.entity.Hotel;
 import com.bd.hotel.reservations.persistence.entity.User;
 import com.bd.hotel.reservations.persistence.enums.CargoFuncionario;
 import com.bd.hotel.reservations.persistence.repository.FuncionarioRepository;
-import com.bd.hotel.reservations.persistence.entity.Hotel;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -14,14 +15,20 @@ import java.math.BigDecimal;
 public class FuncionarioService {
     private final FuncionarioRepository funcionarioRepository;
 
-    public void criarPerfil(User user, String nome, String cpf, Hotel hotel, CargoFuncionario cargo, BigDecimal salario) {
+    @Transactional
+    public void criarPerfil(User user,
+                                   String nome,
+                                   Hotel hotel,
+                                   CargoFuncionario cargo,
+                                   BigDecimal salario, String cpf) {
+
         Funcionario funcionario = Funcionario.builder()
                 .user(user)
                 .nome(nome)
-                .cpf(cpf)
                 .hotel(hotel)
                 .cargo(cargo)
                 .salario(salario)
+                .cpf(cpf)
                 .build();
 
         funcionarioRepository.save(funcionario);

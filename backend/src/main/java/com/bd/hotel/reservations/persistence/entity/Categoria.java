@@ -1,6 +1,7 @@
 package com.bd.hotel.reservations.persistence.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,10 @@ class Categoria {
 
     @Column(name = "preco_diaria", nullable = false, precision = 10, scale = 2)
     private BigDecimal precoDiaria;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String nome;
 
     @Column(nullable = false)
     private Integer capacidade;

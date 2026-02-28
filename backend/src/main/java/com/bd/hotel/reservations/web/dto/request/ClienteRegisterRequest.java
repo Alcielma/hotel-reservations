@@ -7,9 +7,6 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ClienteRegisterRequest {
 
     @NotBlank(message = "Email é obrigatório")
@@ -26,7 +23,9 @@ public class ClienteRegisterRequest {
     @NotBlank(message = "CPF é obrigatório")
     private String cpf;
 
-    private String celular;
+    @NotBlank
+    private String telefone;
 
+    @NotBlank
     private LocalDate dataNascimento;
 }

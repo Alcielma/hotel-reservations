@@ -138,7 +138,7 @@ INSERT INTO cliente (user_id, cpf, nome, data_nascimento, telefone) VALUES
 
 -- Usuários (Funcionários)
 INSERT INTO users (email, password_hash, role) VALUES 
-('carlos.gerencia@horizon.com', '$2a$10$dummyHash', 'GERENTE'),
+('carlos.gerencia@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO'),
 ('marta.recepcao@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO'),
 ('pedro.recepcao@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO'),
 ('julia.camareira@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO'),
@@ -147,19 +147,19 @@ INSERT INTO users (email, password_hash, role) VALUES
 ('silvia.camareira@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO'),
 ('lucas.recepcao@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO'),
 ('patricia.camareira@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO'),
-('marcos.gerencia@horizon.com', '$2a$10$dummyHash', 'GERENTE');
+('marcos.gerencia@horizon.com', '$2a$10$dummyHash', 'FUNCIONARIO');
 
 -- Funcionários
-INSERT INTO funcionario (usuario_id, cpf, hotel_id, nome, cargo, salario) VALUES 
+INSERT INTO funcionario (user_id, cpf, hotel_id, nome, cargo, salario) VALUES
 (51, '12345678901', 1, 'Carlos Silva', 'GERENTE', 4500.00),
-(52, '23456789012', 1, 'Marta Souza', 'RECEPCIONISTA', 2500.00),
-(53, '34567890123', 1, 'Pedro Alves', 'RECEPCIONISTA', 2500.00),
-(54, '45678901234', 1, 'Júlia Lima', 'CAMAREIRA', 1800.00),
-(55, '56789012345', 1, 'Fernando Costa', 'MANUTENCAO', 2600.00),
-(56, '67890123456', 1, 'Roberto Dias', 'MANUTENCAO', 2600.00),
-(57, '78901234567', 1, 'Sílvia Rocha', 'CAMAREIRA', 1800.00),
-(58, '89012345678', 1, 'Lucas Martins', 'RECEPCIONISTA', 2500.00),
-(59, '90123456789', 1, 'Patrícia Gomes', 'CAMAREIRA', 1800.00),
+(52, '23456789012', 1, 'Marta Souza', 'ATENDENTE', 2500.00),
+(53, '34567890123', 1, 'Pedro Alves', 'ATENDENTE', 2500.00),
+(54, '45678901234', 1, 'Júlia Lima', 'ATENDENTE', 1800.00),
+(55, '56789012345', 1, 'Fernando Costa', 'ATENDENTE', 2600.00),
+(56, '67890123456', 1, 'Roberto Dias', 'ATENDENTE', 2600.00),
+(57, '78901234567', 1, 'Sílvia Rocha', 'ATENDENTE', 1800.00),
+(58, '89012345678', 1, 'Lucas Martins', 'ATENDENTE', 2500.00),
+(59, '90123456789', 1, 'Patrícia Gomes', 'ATENDENTE', 1800.00),
 (60, '01234567890', 1, 'Marcos Ribeiro', 'GERENTE', 4500.00);
 
 -- Quartos

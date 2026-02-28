@@ -1,14 +1,9 @@
 package com.bd.hotel.reservations.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -16,7 +11,7 @@ import java.util.Set;
         @UniqueConstraint(name = "uk_hospedagem_reserva", columnNames = "reserva_id")
 })
 @Getter
-class Hospedagem {
+public class Hospedagem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
