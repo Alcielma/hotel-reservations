@@ -31,9 +31,9 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/cadastro" element={<CadastroPage />} />
         
-        <Route path="/home" element={<MainLayout />}>
+        <Route element={<MainLayout />}>
           
-          <Route index element={<Home />} />
+          <Route path="/home" index element={<Home />} />
           
           <Route path="reservas" element={<MinhasReservasPage />} />
 
