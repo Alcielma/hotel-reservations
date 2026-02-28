@@ -3,8 +3,9 @@ package com.bd.hotel.reservations.application.service;
 import com.bd.hotel.reservations.persistence.entity.Cliente;
 import com.bd.hotel.reservations.persistence.entity.Quarto;
 import com.bd.hotel.reservations.persistence.entity.Reserva;
-import com.bd.hotel.reservations.persistence.repository.*; // Importando os repositórios
+import com.bd.hotel.reservations.persistence.repository.*;
 import com.bd.hotel.reservations.web.dto.request.ReservaRequest;
+import com.bd.hotel.reservations.web.dto.response.ReservaResponse;
 import com.bd.hotel.reservations.web.dto.response.ReservasDetalhadasResponse;
 import com.bd.hotel.reservations.web.mapper.ReservaDetalhadaMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,9 @@ public class ReservaService {
 
     private final ReservasDetalhadasViewRepository viewRepo;
     private final ClienteRepository clienteRepo;
-    private final ReservaRepository reservaRepo; // Adicionado
-    private final QuartoRepository quartoRepo;   // Adicionado
+    private final ReservaRepository reservaRepo; 
+    private final QuartoRepository quartoRepo;   
     private final ReservaDetalhadaMapper mapper;
-
-    // --- MÉTODOS DO SEU COLEGA ---
 
     @Transactional(readOnly = true)
     public List<ReservasDetalhadasResponse> listarReservasDetalhadas() {
@@ -59,12 +58,11 @@ public class ReservaService {
     }
     
     @Transactional
-    public Reserva salvar(ReservaRequest dto) {
+    public ReservaResponse salvar(ReservaRequest dto) {
         validarDatas(dto.getDataCheckinPrevisto(), dto.getDataCheckoutPrevisto());
 
         Reserva reserva = new Reserva();
         
-        // Só busca o cliente se o ID for fornecido
         if (dto.getClienteId() != null) {
             Cliente cliente = clienteRepo.findById(dto.getClienteId())
                     .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
@@ -80,7 +78,16 @@ public class ReservaService {
         reserva.setDataCheckoutPrevisto(dto.getDataCheckoutPrevisto());
         reserva.setQuartos(new HashSet<>(quartos));
 
-        return reservaRepo.save(reserva);
+        Reserva reservaSalva = reservaRepo.save(reserva);
+
+        return new ReservaResponse(
+                reservaSalva.getId(),
+                reservaSalva.getCliente() != null ? reservaSalva.getCliente().getId() : null,
+                reservaSalva.getDataCheckinPrevisto(),
+                reservaSalva.getDataCheckoutPrevisto(),
+                dto.getQuartoIds(),
+                dto.getServicoIds()
+        );
     }
 
     @Transactional
