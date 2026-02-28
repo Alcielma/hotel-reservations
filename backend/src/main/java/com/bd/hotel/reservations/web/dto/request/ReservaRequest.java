@@ -15,7 +15,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class ReservaRequest {
 
-    @NotNull(message = "O ID do cliente é obrigatório")
     private Long clienteId;
 
     @NotNull(message = "A data de check-in é obrigatória")

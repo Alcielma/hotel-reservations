@@ -29,7 +29,8 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_ENDPOINTS = {
             "/auth/**",
-            "/error"
+            "/error",
+            "/reservas"
     };
 
     private static final String[] PUBLIC_CATALOG_ENDPOINTS = {
@@ -57,7 +58,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile("dev")
     public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) {
         return baseSecurityFilterChain(http)
                 .authorizeHttpRequests(auth -> auth
