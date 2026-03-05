@@ -10,6 +10,8 @@ import CadastroPage from './pages/CadastroPage';
 import RoomPage from './pages/RoomPage';
 import ReservationConfirm from './components/reservations/ReservationConfirm';
 import RelatorioPage from './pages/RelatorioPage';
+import Rooms from './pages/RoomsListPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
@@ -45,6 +47,12 @@ function App() {
 
           <Route path="home/relatorios" element={<RelatorioPage />} />
           
+          <Route element={<ProtectedRoute allowedRole="GERENTE" />}>
+            <Route path="/quartos" element={<Rooms />} />
+            
+            {/* <Route path="/quartos/novo" element={<NewRoom />} /> */}
+            
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
