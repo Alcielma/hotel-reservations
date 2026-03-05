@@ -57,6 +57,15 @@ const MainLayout: React.FC = () => {
             </Link>
           )}
 
+          {isManager && (
+            <Link 
+              to="/quartos" 
+              className={styles.navLink}
+            >
+            Quartos
+            </Link>
+          )}
+
           <Link 
             to="/" 
             className={styles.navLink}
