@@ -18,9 +18,6 @@ public class ClienteUpdateRequest {
     @NotNull(message = "A data de nascimento é obrigatória")
     private LocalDate dataNascimento;
 
-    @NotBlank(message = "O CPF é obrigatório")
-    private String cpf;
-
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "E-mail inválido")
     private String email;

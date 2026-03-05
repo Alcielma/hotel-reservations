@@ -16,6 +16,4 @@ public class FuncionarioResponse {
     private String cargo;
     private BigDecimal salario;
     private String hotelNome;
-    private String telefone;
-    private java.time.LocalDate dataNascimento;
 }
