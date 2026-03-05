@@ -1,79 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RoomCard from '../components/room/RoomCard';
 import styles from './RoomsListPage.module.css';
 import toast from 'react-hot-toast';
-
-interface CategoriaResponse {
-  id: number;
-  nome: string;
-  capacidade: number;
-  precoDiaria: number;
-}
-
-interface Room {
-  id: number;
-  numero: string;
-  status: 'DISPONIVEL' | 'OCUPADO' | 'MANUTENCAO';
-  area: number;
-  hotelId: number;
-  categoria: CategoriaResponse;
-  image?: string;
-}
+import { getRoomsByHotel, deleteRoomService, type Room } from '../services/roomService';
 
 const Rooms: React.FC = () => {
   const navigate = useNavigate();
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
 
-  // Mock atualizado para bater com a estrutura do seu Backend
-  const [rooms, setRooms] = useState<Room[]>([
-    { 
-      id: 1, 
-      numero: "101-A", 
-      status: 'DISPONIVEL', 
-      area: 25.5, 
-      hotelId: 1, 
-      categoria: { id: 1, nome: 'Standard Solo', capacidade: 1, precoDiaria: 200.00 },
-      image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80'
-    },
-    { 
-      id: 2, 
-      numero: "202-B", 
-      status: 'OCUPADO', 
-      area: 45.0, 
-      hotelId: 1, 
-      categoria: { id: 2, nome: 'Double Deluxe', capacidade: 2, precoDiaria: 450.00 },
-      image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80'
-    },
-    { 
-      id: 3, 
-      numero: "303-C", 
-      status: 'MANUTENCAO', 
-      area: 80.0, 
-      hotelId: 1, 
-      categoria: { id: 3, nome: 'Suíte Master', capacidade: 4, precoDiaria: 800.00 },
-      image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80'
-    },
-  ]);
+  const HOTEL_ID = 1; 
 
-  const openDeletePrompt = (id: number) => {
-    setRoomToDelete(id);
-  };
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        setLoading(true);
+        const data = await getRoomsByHotel(HOTEL_ID);
+        setRooms(data);
+      } catch (error) {
+        console.error("Não foi possivel carregar os quartos: ", error);
+        toast.error("Não foi possível carregar os quartos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, [HOTEL_ID]);
 
   const confirmDelete = async () => {
-    if (roomToDelete) {
-      try {
-        // Simulação de DELETE na API
-        setRooms(rooms.filter(room => room.id !== roomToDelete));
-        setRoomToDelete(null);
-        toast.success("Quarto excluído com sucesso!");
-      } catch (error) {
-        console.error("Erro ao excluir:", error);
-        toast.error("Erro ao conectar com o servidor.");
-      }
+    if (!roomToDelete) return;
+
+    const success = await deleteRoomService(roomToDelete);
+    
+    if (success) {
+      setRooms(prev => prev.filter(room => room.id !== roomToDelete));
+      toast.success("Quarto excluído com sucesso!");
+    } else {
+      toast.error("Erro ao excluir quarto do servidor.");
     }
+    setRoomToDelete(null);
   };
 
   const openModal = (room: Room) => {
@@ -85,6 +56,10 @@ const Rooms: React.FC = () => {
     setSelectedRoom(null);
     setIsEditMode(false);
   };
+
+  if (loading) {
+    return <div className={styles.loadingContainer}>Carregando quartos...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -101,20 +76,26 @@ const Rooms: React.FC = () => {
         </button>
       </header>
 
-      <div className={styles.grid}>
-        {rooms.map(room => (
-          <RoomCard 
-            key={room.id}
-            id={room.id}
-            type={room.categoria.nome}
-            description={`Quarto ${room.numero} • ${room.area}m²`}
-            price={`R$ ${room.categoria.precoDiaria.toFixed(2)} / noite`}
-            image={room.image || "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80"}
-            onCardClick={() => openModal(room)}
-            onDelete={() => openDeletePrompt(room.id)}
-          />
-        ))}
-      </div>
+      {rooms.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>Nenhum quarto encontrado para este hotel.</p>
+        </div>
+      ) : (
+        <div className={styles.grid}>
+          {rooms.map(room => (
+            <RoomCard 
+              key={room.id}
+              id={room.id}
+              type={room.categoria.nome}
+              description={`Quarto ${room.numero} • ${room.area}m²`}
+              price={`R$ ${room.categoria.precoDiaria.toFixed(2)} / noite`}
+              image={room.image || "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80"}
+              onCardClick={() => openModal(room)}
+              onDelete={() => setRoomToDelete(room.id)}
+            />
+          ))}
+        </div>
+      )}
 
       {/* POPUP DE CONFIRMAÇÃO DE DELEÇÃO */}
       {roomToDelete && (
@@ -124,7 +105,6 @@ const Rooms: React.FC = () => {
             <h3>Confirmar Exclusão</h3>
             <p>
               Tem certeza que deseja excluir o quarto <strong>#{roomToDelete}</strong>? 
-              Esta ação removerá todos os registros associados.
             </p>
             <div className={styles.popupActions}>
               <button className={styles.cancelBtn} onClick={() => setRoomToDelete(null)}>
@@ -150,9 +130,12 @@ const Rooms: React.FC = () => {
             </header>
 
             <div className={styles.modalBody}>
-              {/* Foto sempre visível no topo (Visualização ou Edição) */}
               <div className={styles.modalImageContainer}>
-                <img src={selectedRoom.image} alt="Quarto" className={styles.modalMainImage} />
+                <img 
+                  src={selectedRoom.image || "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=600&q=80"} 
+                  alt="Quarto" 
+                  className={styles.modalMainImage} 
+                />
               </div>
 
               {isEditMode ? (
@@ -193,6 +176,16 @@ const Rooms: React.FC = () => {
                     <div className={styles.detailItem}><strong>Capacidade</strong><span>{selectedRoom.categoria.capacidade} Pessoas</span></div>
                     <div className={styles.detailItem}><strong>Preço</strong><span className={styles.highlightPrice}>R$ {selectedRoom.categoria.precoDiaria.toFixed(2)}</span></div>
                   </div>
+                  
+                  {/* Exibição das Comodidades no Detalhe */}
+                  <div className={styles.comodidadesList}>
+                    <strong>Comodidades:</strong>
+                    <div className={styles.chipsContainer}>
+                      {selectedRoom.comodidades.map(com => (
+                        <span key={com.id} className={styles.comodidadeChip}>{com.nome}</span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -201,7 +194,7 @@ const Rooms: React.FC = () => {
               <button className={styles.secondaryBtn} onClick={() => setIsEditMode(!isEditMode)}>
                 {isEditMode ? 'Cancelar' : 'Editar Dados'}
               </button>
-              <button className={styles.primaryBtn} onClick={isEditMode ? () => { toast.success("Salvo!"); closeModal(); } : closeModal}>
+              <button className={styles.primaryBtn} onClick={isEditMode ? () => { toast.success("Funcionalidade em desenvolvimento!"); closeModal(); } : closeModal}>
                 {isEditMode ? 'Salvar' : 'Fechar'}
               </button>
             </footer>
