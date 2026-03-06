@@ -129,6 +129,10 @@ export default function MinhasReservasPage() {
     return true;
   });
 
+  const handleCheckIn = (data: ReservationCardProps) => {
+    navigate('/hospedagem', { state: { reservation: data } });
+  };
+
   return (
     <div className={styles.container}>
       
@@ -196,6 +200,7 @@ export default function MinhasReservasPage() {
               onCancel={handleCancel}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onCheckIn={isManager ? handleCheckIn : undefined}
             />
           ))}
         </div>
