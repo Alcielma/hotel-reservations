@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
-    
+
     List<Reserva> findByClienteId(Long clienteId);
 
     @Query("SELECT r FROM Reserva r JOIN FETCH r.quarto JOIN FETCH r.cliente c JOIN FETCH c.user WHERE c.user.email = :email")
