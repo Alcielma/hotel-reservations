@@ -2,6 +2,8 @@ package com.bd.hotel.reservations.web.mapper;
 
 import com.bd.hotel.reservations.persistence.entity.Categoria;
 import com.bd.hotel.reservations.persistence.entity.Quarto;
+import com.bd.hotel.reservations.persistence.enums.StatusQuarto;
+import com.bd.hotel.reservations.web.dto.request.QuartoRequest;
 import com.bd.hotel.reservations.web.dto.response.CategoriaResponse;
 import com.bd.hotel.reservations.web.dto.response.ComodidadeResponse;
 import com.bd.hotel.reservations.web.dto.response.QuartoResponse;
