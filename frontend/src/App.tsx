@@ -56,16 +56,10 @@ function App() {
             <Route path="/quartos" element={<Rooms />} />
             
             <Route path="/quartos/novo" element={<NewRoomPage />} />
-            
+            <Route path="/hospedagem" element={<HospedagemFormPage />} />
           </Route>
-          <Route path="/hospedagem" element={<HospedagemFormPage />} />
           
-          <Route element={<ProtectedRoute allowedRole="FUNCIONARIO" />}>
-            <Route path="/quartos" element={<Rooms />} />
-            
-            <Route path="/quartos/novo" element={<NewRoomPage />} />
-            
-          </Route>
+
         </Route>
       </Routes>
     </BrowserRouter>
