@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -104,10 +103,13 @@ public class QuartoService {
                 .orElseThrow(() -> new QuartoNotFoundException(id));
     }
 
+<<<<<<< Updated upstream
     public List<Quarto> findAllById(Set<Long> ids) {
         return quartoRepository.findAllById(ids);
     }
 
+=======
+>>>>>>> Stashed changes
     @Transactional(readOnly = true)
     public List<QuartoResponse> listarTodosPorHotel(Long hotelId) {
         List<Quarto> quartos = quartoRepository.findByHotelId(hotelId);

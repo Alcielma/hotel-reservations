@@ -110,7 +110,7 @@ public class ReservaService {
 
         reserva.setCliente(cliente);
 
-        Quarto quarto = quartoSer
+        Quarto quarto = quartoService.(dto.quartoId());
 
         if (quartos.isEmpty()) {
             throw new RuntimeException("Pelo menos um quarto deve ser selecionado");
@@ -143,12 +143,20 @@ public class ReservaService {
         return reservaMapper.toResponse(atualizada);
     }
 
-    @Transactional(readOnly = true)
-    public boolean existsById(Long id) {
-        if (!reservaRepository.existsById(id)) {
-            throw new ReservaNotFoundException(id);
-        }
-        return true;
+    @Transactional
+    public Reserva atualizar(Long id, ReservaRequest dto) {
+        Reserva reserva = reservaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException());
+
+        validarDatas(dto.getDataCheckinPrevisto(), dto.getDataCheckoutPrevisto());
+
+        List<Quarto> quartos = quartoRepo.findAllById(dto.getQuartoIds());
+
+        reserva.setDataCheckinPrevisto(dto.getDataCheckinPrevisto());
+        reserva.setDataCheckoutPrevisto(dto.getDataCheckoutPrevisto());
+        reserva.setQuartos(new HashSet<>(quartos));
+
+        return reservaRepo.save(reserva);
     }
 
     @Transactional
@@ -201,62 +209,4 @@ public class ReservaService {
             throw new RuntimeException("Data de Check-out deve ser após o check-in: " + checkout);
         }
     }
-}
-
-
-
-
-
-
-
-@Transactional
-public Reserva atualizar(Long id, ReservaRequest dto) {
-    Reserva reserva = reservaRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException());
-
-    validarDatas(dto.getDataCheckinPrevisto(), dto.getDataCheckoutPrevisto());
-
-    List<Quarto> quartos = quartoRepo.findAllById(dto.getQuartoIds());
-
-    reserva.setDataCheckinPrevisto(dto.getDataCheckinPrevisto());
-    reserva.setDataCheckoutPrevisto(dto.getDataCheckoutPrevisto());
-    reserva.setQuartos(new HashSet<>(quartos));
-
-    return reservaRepo.save(reserva);
-}
-
-public boolean existsById(Long id) {
-    if (!reservaRepo.existsById(id)) {
-        throw new ReservaNotFoundException(id);
-    }
-    return true;
-}
-
-@Transactional
-public void deletar(Long id) {
-    Reserva reserva = reservaRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
-
-    // remove relação com quartos
-    reserva.getQuartos().clear();
-
-    // remove hospedagem se existir
-    if (reserva.getHospedagem() != null) {
-        reserva.setHospedagem(null);
-    }
-
-    reservaRepo.delete(reserva);
-}
-
-@Transactional
-public void cancelar(Long id) {
-    Reserva reserva = reservaRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
-
-    if (reserva.getStatusReserva() == StatusReserva.CANCELADA) {
-        throw new RuntimeException("Reserva já está cancelada");
-    }
-
-    reserva.setStatusReserva(StatusReserva.CANCELADA);
-    reservaRepo.save(reserva);
 }

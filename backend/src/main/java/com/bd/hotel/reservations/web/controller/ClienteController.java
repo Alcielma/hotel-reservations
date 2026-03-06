@@ -19,7 +19,7 @@ public class ClienteController {
 
     @GetMapping("/me")
     public ResponseEntity<ClienteResponse> getMyProfile(@AuthenticationPrincipal AuthUserDetails userDetails) {
-        return ResponseEntity.ok(clienteService.buscarPorIdUsuario(userDetails.getId()));
+        return ResponseEntity.ok(clienteService.buscarPorUserId(userDetails.getId()));
     }
 
     @GetMapping("/cpf/{cpf}")

@@ -13,12 +13,12 @@ public class ClienteNotFoundException extends ApiException {
         );
     }
 
-    public ClienteNotFoundException(String email) {
+    public ClienteNotFoundException(String chave) {
         super(
                 "CLIENTE_NOT_FOUND",
                 HttpStatus.NOT_FOUND,
                 "Recurso não encontrado",
-                "Cliente não encontrado com email: " + email
+                "Cliente não encontrado com email/cpf: " + chave
         );
     }
 }
