@@ -18,7 +18,8 @@ import type { AdditionalServiceData } from '../components/reservations/Additiona
 import { 
   getQuartosDisponiveis, 
   getClienteByCpf, 
-  createHospedagem, 
+  createHospedagem,
+  getServicosAdicionais, // <--- Novo endpoint importado
   type CriarHospedagemRequest,
   type QuartoDisponivel 
 } from '../services/hostingService';
@@ -35,10 +36,8 @@ export const HospedagemFormPage: React.FC = () => {
   const [loadingQuartos, setLoadingQuartos] = useState(false);
 
   // --- Estados dos Serviços Adicionais ---
-  const [servicosDisponiveis, setServicosDisponiveis] = useState<AdditionalServiceData[]>([
-    { id: 1, nomeServico: 'Frigobar', descricao: 'Bebidas e snacks', preco: 50.0 },
-    { id: 2, nomeServico: 'Lavanderia', descricao: 'Até 5 peças', preco: 30.0 }
-  ]);
+  // Inicia vazio, será preenchido pelo useEffect
+  const [servicosDisponiveis, setServicosDisponiveis] = useState<AdditionalServiceData[]>([]);
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
   const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,19 +52,37 @@ export const HospedagemFormPage: React.FC = () => {
     dataEntrada: new Date().toISOString().split('T')[0],
     dataSaida: reservationData?.endDate || '',
     metodoPagamento: '',
-    valorBase: reservationData?.totalValue || 0,
   });
 
   const isFromReservation = !!reservationData;
 
   // --- Cálculos Dinâmicos ---
+  const calcularNoites = (entrada: string, saida: string) => {
+    if (!entrada || !saida) return 0;
+    const dataIn = new Date(entrada);
+    const dataOut = new Date(saida);
+    const diffTime = dataOut.getTime() - dataIn.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  };
+
+  const noites = calcularNoites(formData.dataEntrada, formData.dataSaida);
+
+  // Define o valor da diária com base na reserva ou no quarto escolhido
+  const precoDiaria = isFromReservation 
+    ? (Number(reservationData.totalValue) / calcularNoites(reservationData.startDate, reservationData.endDate))
+    : (quartosDisponiveis.find(q => q.id === Number(formData.quartoId))?.preco || 0);
+
+  const valorHospedagem = noites * precoDiaria;
+
   const totalServicos = servicosDisponiveis
     .filter(s => selectedServices.includes(s.id!))
     .reduce((acc, curr) => acc + curr.preco, 0);
   
-  const valorTotalFinal = Number(formData.valorBase) + totalServicos;
+  const valorTotalFinal = valorHospedagem + totalServicos;
 
   // --- Efeitos ---
+  // 1. Carregar Quartos
   useEffect(() => {
     const carregarQuartos = async () => {
       if (formData.dataEntrada && formData.dataSaida && !isFromReservation) {
@@ -87,6 +104,31 @@ export const HospedagemFormPage: React.FC = () => {
     carregarQuartos();
   }, [formData.dataEntrada, formData.dataSaida, isFromReservation, formData.quartoId]);
 
+  // 2. Carregar Serviços (Resolvendo o erro de tipagem)
+  useEffect(() => {
+    const carregarServicos = async () => {
+      try {
+        const dados = await getServicosAdicionais();
+        
+        // Mapeamento para garantir que a descrição seja string (correção do erro TS)
+        const servicosFormatados: AdditionalServiceData[] = dados.map(servico => ({
+          id: servico.id,
+          nomeServico: servico.nomeServico,
+          descricao: servico.descricao || '', // Transforma undefined em string vazia
+          preco: servico.preco
+        }));
+
+        setServicosDisponiveis(servicosFormatados);
+      } catch (error) {
+        console.error("Erro ao carregar serviços adicionais:", error);
+        toast.error("Não foi possível carregar os serviços extras.");
+      }
+    };
+
+    carregarServicos();
+  }, []);
+
+  // 3. Fechar dropdown ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -101,12 +143,14 @@ export const HospedagemFormPage: React.FC = () => {
   const handleBuscarCliente = async () => {
     if (!formData.cpf) return toast.error("Digite um CPF para buscar");
     setLoadingSearch(true);
+    
+    const cpfLimpo = formData.cpf.replace(/\D/g, '');
     try {
-      const cliente = await getClienteByCpf(formData.cpf);
+      const cliente = await getClienteByCpf(cpfLimpo);
       setFormData(prev => ({ ...prev, nome: cliente.nome }));
       toast.success("Cliente localizado!");
     } catch (err) {
-      console.log("Cliente nao encontrado ", err)
+      console.log("Cliente nao encontrado ", err);
       toast.error("Cliente não encontrado.");
       setFormData(prev => ({ ...prev, nome: '' }));
     } finally {
@@ -114,22 +158,37 @@ export const HospedagemFormPage: React.FC = () => {
     }
   };
 
-  const handleSaveService = (data: AdditionalServiceData) => {
-    if (serviceToEdit) {
-      setServicosDisponiveis(prev => prev.map(s => s.id === serviceToEdit.id ? { ...data, id: s.id } : s));
-      toast.success("Serviço atualizado!");
-    } else {
-      setServicosDisponiveis([...servicosDisponiveis, { ...data, id: Date.now() }]);
-      toast.success("Serviço cadastrado!");
+  // Handler de Salvar/Editar Serviço Adicional
+  const handleSaveService = async (data: AdditionalServiceData) => {
+    try {
+      if (serviceToEdit) {
+        // Se você tiver um endpoint PUT, coloque aqui: await api.put(`/servicos-adicionais/${serviceToEdit.id}`, data)
+        setServicosDisponiveis(prev => prev.map(s => s.id === serviceToEdit.id ? { ...data, id: s.id } : s));
+        toast.success("Serviço atualizado!");
+      } else {
+        // Se você tiver um endpoint POST, coloque aqui: const res = await api.post(`/servicos-adicionais`, data)
+        const novoServico = { ...data, id: Date.now() }; // Use res.data se tiver backend
+        setServicosDisponiveis([...servicosDisponiveis, novoServico]);
+        toast.success("Serviço cadastrado!");
+      }
+    } catch (error) {
+      toast.error("Erro ao salvar serviço.");
+    } finally {
+      setIsModalOpen(false);
+      setServiceToEdit(null);
     }
-    setIsModalOpen(false);
-    setServiceToEdit(null);
   };
 
-  const handleDeleteService = (id: number) => {
-    setServicosDisponiveis(prev => prev.filter(s => s.id !== id));
-    setSelectedServices(prev => prev.filter(sid => sid !== id));
-    toast.error("Serviço removido");
+  // Handler de Excluir Serviço Adicional
+  const handleDeleteService = async (id: number) => {
+    try {
+      // Se você tiver um endpoint DELETE, coloque aqui: await api.delete(`/servicos-adicionais/${id}`)
+      setServicosDisponiveis(prev => prev.filter(s => s.id !== id));
+      setSelectedServices(prev => prev.filter(sid => sid !== id));
+      toast.success("Serviço removido");
+    } catch (error) {
+      toast.error("Erro ao remover serviço.");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -137,10 +196,12 @@ export const HospedagemFormPage: React.FC = () => {
     if (!formData.nome) return toast.error("Busque um hóspede primeiro.");
     if (!formData.quartoId) return toast.error("Selecione um quarto.");
 
+    const cpfApenasNumeros = formData.cpf.replace(/\D/g, '');
+
     const payload: CriarHospedagemRequest = {
       reservaId: formData.reservaId ? Number(formData.reservaId) : null,
       quartoId: Number(formData.quartoId),
-      clienteCpf: formData.cpf,
+      clienteCpf: cpfApenasNumeros,
       dataEntrada: formData.dataEntrada,
       dataSaida: formData.dataSaida,
       pagamento: {
@@ -150,13 +211,14 @@ export const HospedagemFormPage: React.FC = () => {
         dataPagamento: new Date().toISOString()
       }
     };
+    console.log("Payload enviado para backend: ", payload);
 
     try {
       await createHospedagem(payload);
       toast.success("Hospedagem iniciada com sucesso!");
       navigate('/reservas'); 
     } catch (error) {
-      console.log("Erro ao salvar hospedagem", error)
+      console.log("Erro ao salvar hospedagem", error);
       toast.error("Erro ao salvar hospedagem.");
     }
   };
@@ -249,7 +311,7 @@ export const HospedagemFormPage: React.FC = () => {
                     )}
                     {quartosDisponiveis.map(q => (
                       <option key={q.id} value={q.id}>
-                        Quarto {q.numero} - {q.tipo || 'Comum'}
+                        Quarto {q.numero} - {q.tipo || 'Comum'} (R$ {q.preco?.toFixed(2) || '0.00'})
                       </option>
                     ))}
                   </>
@@ -330,6 +392,13 @@ export const HospedagemFormPage: React.FC = () => {
 
         <section className={styles.section}>
           <h3 className={styles.sectionTitle}>Pagamento</h3>
+          
+          {/* Adicionado um Resumo para o Usuário entender a conta */}
+          <div className={styles.invoiceSummary}>
+             <p>{noites} diárias x R$ {precoDiaria.toFixed(2)} = <span>R$ {valorHospedagem.toFixed(2)}</span></p>
+             <p>Serviços Extras = <span>R$ {totalServicos.toFixed(2)}</span></p>
+          </div>
+
           <div className={styles.row}>
             <div className={styles.inputGroup}>
               <label>Método de Pagamento</label>

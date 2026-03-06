@@ -7,6 +7,7 @@ export interface QuartoDisponivel {
     id: number;
     numero: string;
     tipo: string;
+    preco: number;
 }
 
 export interface ClientePorCpf {
@@ -14,6 +15,13 @@ export interface ClientePorCpf {
     nome: string;
     cpf: string;
     email: string;
+}
+
+export interface ServicoAdicional {
+    id: number;
+    nomeServico: string;
+    descricao?: string;
+    preco: number;
 }
 
 export interface CriarHospedagemRequest {
@@ -50,9 +58,18 @@ export const getClienteByCpf = async (cpf: string): Promise<ClientePorCpf> => {
 };
 
 /**
+ * Busca todos os serviços adicionais disponíveis
+ */
+export const getServicosAdicionais = async (): Promise<ServicoAdicional[]> => {
+    const response = await api.get<ServicoAdicional[]>('/servicos-adicionais');
+    return response.data;
+};
+
+/**
  * Cria a hospedagem
  */
 export const createHospedagem = async (data: CriarHospedagemRequest): Promise<any> => {
+    console.log(data)
     const response = await api.post('/hospedagens', data);
     return response.data;
 };
