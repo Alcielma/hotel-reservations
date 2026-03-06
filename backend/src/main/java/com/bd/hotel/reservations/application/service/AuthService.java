@@ -52,13 +52,7 @@ public class AuthService {
                 Role.CLIENTE
         );
 
-        clienteService.criarPerfil(
-                user,
-                request.nome(),
-                request.cpf(),
-                request.telefone(),
-                request.dataNascimento()
-        );
+        clienteService.criarPerfil(user, request);
     }
 
     public LoginResponse login(LoginRequest request) {

@@ -35,13 +35,9 @@ public class Hospedagem {
     @Column(name = "data_checkout_real")
     private Instant dataCheckoutReal;
 
-    @ManyToMany
-    @JoinTable(
-            name = "hospedagem_quarto",
-            joinColumns = @JoinColumn(name = "hospedagem_id"),
-            inverseJoinColumns = @JoinColumn(name = "quarto_id")
-    )
-    private Set<Quarto> quartos = new HashSet<>();
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "quarto_id", nullable = false)
+    private Quarto quarto;
 
     @OneToMany(mappedBy = "hospedagem", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<HospedagemServico> servicos = new HashSet<>();

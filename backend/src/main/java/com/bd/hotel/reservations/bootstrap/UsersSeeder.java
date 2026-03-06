@@ -12,6 +12,7 @@ import com.bd.hotel.reservations.persistence.repository.ClienteRepository;
 import com.bd.hotel.reservations.persistence.repository.FuncionarioRepository;
 import com.bd.hotel.reservations.persistence.repository.HotelRepository;
 import com.bd.hotel.reservations.persistence.repository.UserRepository;
+import com.bd.hotel.reservations.web.dto.request.ClienteRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -97,22 +98,25 @@ class UsersSeeder implements SeederInterface {
     }
 
     private void seedClientes(List<SeedCliente> clientes) {
-        for (SeedCliente sc : clientes) {
-            String normalizedEmail = sc.email().trim().toLowerCase();
+        for (SeedCliente seedCliente : clientes) {
+            String normalizedEmail = seedCliente.email().trim().toLowerCase();
 
-            if (userRepository.existsByEmail(normalizedEmail) || clienteRepository.existsByCpf(sc.cpf())) {
+            if (userRepository.existsByEmail(normalizedEmail) || clienteRepository.existsByCpf(seedCliente.cpf())) {
                 continue;
             }
 
-            User user = userService.criarUsuario(normalizedEmail, sc.rawPassword(), Role.CLIENTE);
+            User user = userService.criarUsuario(normalizedEmail, seedCliente.rawPassword(), Role.CLIENTE);
 
-            clienteService.criarPerfil(
-                    user,
-                    sc.nome(),
-                    sc.cpf(),
-                    sc.telefone(),
-                    sc.dataNascimento()
+            ClienteRegisterRequest request = new ClienteRegisterRequest(
+                    normalizedEmail,
+                    seedCliente.rawPassword(),
+                    seedCliente.nome(),
+                    seedCliente.cpf(),
+                    seedCliente.telefone(),
+                    seedCliente.dataNascimento()
             );
+
+            clienteService.criarPerfil(user, request);
         }
     }
 
