@@ -13,6 +13,7 @@ import com.bd.hotel.reservations.persistence.repository.HotelRepository;
 import com.bd.hotel.reservations.persistence.repository.QuartoRepository;
 import com.bd.hotel.reservations.persistence.repository.QuartosDisponiveisViewRepository;
 import com.bd.hotel.reservations.web.dto.request.QuartosDisponiveisViewRowDto;
+import com.bd.hotel.reservations.web.dto.request.QuartoRequest;
 import com.bd.hotel.reservations.web.dto.response.QuartoDisponivelResponse;
 import com.bd.hotel.reservations.web.dto.response.QuartoResponse;
 import com.bd.hotel.reservations.web.mapper.QuartoDisponivelMapper;
@@ -44,15 +45,15 @@ public class QuartoService {
 
     @Transactional
     public QuartoResponse criar(QuartoRequest request) {
-        Hotel hotel = hotelRepository.findById(request.getHotelId())
-                .orElseThrow(() -> new HotelNotFoundException(request.getHotelId()));
+        Hotel hotel = hotelRepository.findById(request.hotelId())
+                .orElseThrow(() -> new HotelNotFoundException(request.hotelId()));
 
-        Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
-                .orElseThrow(() -> new CategoriaNotFoundException(request.getCategoriaId()));
+        Categoria categoria = categoriaRepository.findById(request.categoriaId())
+                .orElseThrow(() -> new CategoriaNotFoundException(request.categoriaId()));
 
         Set<Comodidade> comodidades = new HashSet<>();
-        if (request.getComodidadeIds() != null && !request.getComodidadeIds().isEmpty()) {
-            comodidades.addAll(comodidadeRepository.findAllById(request.getComodidadeIds()));
+        if (request.comodidadeIds() != null && !request.comodidadeIds().isEmpty()) {
+            comodidades.addAll(comodidadeRepository.findAllById(request.comodidadeIds()));
         }
 
         Quarto quarto = quartoMapper.toEntity(request, hotel, categoria, comodidades);
@@ -88,8 +89,7 @@ public class QuartoService {
 
     @Transactional(readOnly = true)
     public QuartoResponse buscarPorId(Long id) {
-        Quarto quarto = quartoRepository.findById(id)
-                .orElseThrow(() -> new QuartoNotFoundException(id));
+        Quarto quarto = buscarEntidadePorId(id);
 
         // evita LazyInitializationException no quartoDisponivelMapper
         Hibernate.initialize(quarto.getCategoria());
@@ -97,6 +97,15 @@ public class QuartoService {
         Hibernate.initialize(quarto.getComodidades());
 
         return quartoMapper.toResponse(quarto);
+    }
+
+    public Quarto buscarEntidadePorId(Long id) {
+        return quartoRepository.findById(id)
+                .orElseThrow(() -> new QuartoNotFoundException(id));
+    }
+
+    public List<Quarto> findAllById(Set<Long> ids) {
+        return quartoRepository.findAllById(ids);
     }
 
     @Transactional(readOnly = true)
@@ -114,5 +123,32 @@ public class QuartoService {
         return quartos.stream()
                 .map(quartoMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public QuartoResponse atualizar(Long id, QuartoRequest request) {
+        Quarto quarto = buscarEntidadePorId(id);
+
+        Hotel hotel = hotelRepository.findById(request.hotelId())
+                .orElseThrow(() -> new HotelNotFoundException(request.hotelId()));
+
+        Categoria categoria = categoriaRepository.findById(request.categoriaId())
+                .orElseThrow(() -> new CategoriaNotFoundException(request.categoriaId()));
+
+        Set<Comodidade> comodidades = new HashSet<>();
+        if (request.comodidadeIds() != null && !request.comodidadeIds().isEmpty()) {
+            comodidades.addAll(comodidadeRepository.findAllById(request.comodidadeIds()));
+        }
+
+        quarto.atualizar(hotel, categoria, request.numero(), request.status(), request.area(), comodidades);
+
+        Quarto salvo = quartoRepository.save(quarto);
+        return quartoMapper.toResponse(salvo);
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        Quarto quarto = buscarEntidadePorId(id);
+        quartoRepository.delete(quarto);
     }
 }
