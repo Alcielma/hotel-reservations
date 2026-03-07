@@ -71,7 +71,7 @@ const ReservationConfirm = () => {
     const reservationData = {
       dataCheckinPrevisto: checkIn,
       dataCheckoutPrevisto: checkOut,
-      quartoIds: [room.id],
+      quartoId: room.id,
       servicosAdicionaisIds: selectedServices // Enviando os serviços escolhidos
     };
 
